@@ -18,9 +18,9 @@ from sklearn.model_selection import GridSearchCV
 
 from sklearn.metrics import plot_roc_curve, classification_report
 
-import CONFIG
+import config
 
-def import_data(pth = DATA_PATH):
+def import_data(pth = config.DATA_PATH):
     '''
     returns dataframe for the csv found at pth
 
@@ -93,7 +93,7 @@ def encoder_helper(df, category_lst, response):
         for val in df[category_var]:
             category_var_lst.append(cat_var_groups.loc[val])
 
-        df[category_var+'_Churn'] = gender_lst
+        df[category_var+'_Churn'] = cat_var_lst
     
     return df
 
@@ -109,6 +109,12 @@ def perform_feature_engineering(df, response):
               y_train: y training data
               y_test: y testing data
     '''
+
+    y = df["churn"]
+    X = pd.DataFrame()
+    X[config.KEEP_COLS] = df[config.KEEP_COLS]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.3, random_state=42)
+    return X_train, X_test, y_train, y_test 
 
 def classification_report_image(y_train,
                                 y_test,
