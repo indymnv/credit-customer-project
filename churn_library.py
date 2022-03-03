@@ -163,4 +163,37 @@ def train_models(X_train, X_test, y_train, y_test):
     output:
               None
     '''
-    pass
+    srfc = RandomForestClassifier(random_state=42)
+    lrc = LogisticRegression()
+
+    param_grid = { 
+        'n_estimators': [200, 500],
+        'max_features': ['auto', 'sqrt'],
+        'max_depth' : [4,5,100],
+        'criterion' :['gini', 'entropy']
+    }
+
+    cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
+    cv_rfc.fit(X_train, y_train)
+
+    lrc.fit(X_train, y_train)
+
+    y_train_preds_rf = cv_rfc.best_estimator_.predict(X_train)
+    y_test_preds_rf = cv_rfc.best_estimator_.predict(X_test)
+
+    y_train_preds_lr = lrc.predict(X_train)
+    y_test_preds_lr = lrc.predict(X_test)
+
+    # save best model
+    joblib.dump(cv_rfc.best_estimator_, './models/rfc_model.pkl')
+    joblib.dump(lrc, './models/logistic_model.pkl')
+
+    # Plot roc-auc curves
+    lrc_plot = plot_roc_curve(lrc, X_test, y_test)
+    plt.savefig(r"./images/ROC_lr_test.png")
+
+    plt.figure(figsize=(15, 8))
+    ax = plt.gca()
+    rfc_disp = plot_roc_curve(cv_rfc.best_estimator_, X_test, y_test, ax=ax, alpha=0.8)
+    lrc_plot.plot(ax=ax, alpha=0.8)
+    plt.savefig(r"./images/ROC_lr_and_rf_test.png")
