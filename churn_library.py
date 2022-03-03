@@ -91,7 +91,7 @@ def encoder_helper(df, category_lst, response):
         cat_var_groups = df.groupby(category_var).mean()['Churn']
 
         for val in df[category_var]:
-            category_var_lst.append(cat_var_groups.loc[val])
+            cat_var_lst.append(cat_var_groups.loc[val])
 
         df[category_var+'_Churn'] = cat_var_lst
     
