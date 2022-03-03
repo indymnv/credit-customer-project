@@ -150,7 +150,30 @@ def feature_importance_plot(model, X_data, output_pth):
     output:
              None
     '''
-    pass
+    rfc_model = joblib.load('./models/rfc_model.pkl') #Then replace for model
+
+    # Calculate feature importances
+    importances = rfc_model.best_estimator_.feature_importances_
+    # Sort feature importances in descending order
+    indices = np.argsort(importances)[::-1]
+
+    # Rearrange feature names so they match the sorted feature importances
+    names = [X_data.columns[i] for i in indices]
+
+    # Create plot
+    plt.figure(figsize=(20,5))
+
+    # Create plot title
+    plt.title("Feature Importance")
+    plt.ylabel('Importance')
+
+    # Add bars
+    plt.bar(range(X_data.shape[1]), importances[indices])
+
+    # Add feature names as x-axis labels
+    plt.xticks(range(X_data.shape[1]), names, rotation=90);
+
+    plt.savefig(r"./images/feature_importance.png")
 
 def train_models(X_train, X_test, y_train, y_test):
     '''
@@ -163,7 +186,7 @@ def train_models(X_train, X_test, y_train, y_test):
     output:
               None
     '''
-    srfc = RandomForestClassifier(random_state=42)
+    rfc = RandomForestClassifier(random_state=42)
     lrc = LogisticRegression()
 
     param_grid = { 
