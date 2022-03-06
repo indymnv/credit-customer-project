@@ -91,7 +91,7 @@ def encoder_helper(df, category_lst, response):
         cat_var_groups = df.groupby(category_var).mean()['Churn']
 
         for val in df[category_var]:
-            category_var_lst.append(cat_var_groups.loc[val])
+            cat_var_lst.append(cat_var_groups.loc[val])
 
         df[category_var+'_Churn'] = cat_var_lst
     
@@ -136,7 +136,25 @@ def classification_report_image(y_train,
     output:
              None
     '''
-    pass
+    
+    plt.rc('figure', figsize=(5, 5))
+    #plt.text(0.01, 0.05, str(model.summary()), {'fontsize': 12}) old approach
+    plt.text(0.01, 1.25, str('Random Forest Train'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.05, str(classification_report(y_test, y_test_preds_rf)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.text(0.01, 0.6, str('Random Forest Test'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.7, str(classification_report(y_train, y_train_preds_rf)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.axis('off')
+    plt.savefig(r"./images/report_rf.png")
+
+    plt.rc('figure', figsize=(5, 5))
+    plt.text(0.01, 1.25, str('Logistic Regression Train'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.05, str(classification_report(y_train, y_train_preds_lr)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.text(0.01, 0.6, str('Logistic Regression Test'), {'fontsize': 10}, fontproperties = 'monospace')
+    plt.text(0.01, 0.7, str(classification_report(y_test, y_test_preds_lr)), {'fontsize': 10}, fontproperties = 'monospace') # approach improved by OP -> monospace!
+    plt.axis('off')
+    plt.savefig(r"./images/report_lr.png")
+
+
 
 
 def feature_importance_plot(model, X_data, output_pth):
@@ -150,7 +168,31 @@ def feature_importance_plot(model, X_data, output_pth):
     output:
              None
     '''
-    pass
+    rfc_model = joblib.load('./models/rfc_model.pkl') #Then replace for model
+
+    # Calculate feature importances
+    importances = rfc_model.best_estimator_.feature_importances_
+    # Sort feature importances in descending order
+    indices = np.argsort(importances)[::-1]
+
+    # Rearrange feature names so they match the sorted feature importances
+    names = [X_data.columns[i] for i in indices]
+
+    # Create plot
+    plt.figure(figsize=(20,5))
+
+    # Create plot title
+    plt.title("Feature Importance")
+    plt.ylabel('Importance')
+
+    # Add bars
+    plt.bar(range(X_data.shape[1]), importances[indices])
+
+    # Add feature names as x-axis labels
+    plt.xticks(range(X_data.shape[1]), names, rotation=90)
+
+    plt.savefig(r"./images/feature_importance.png")
+
 
 def train_models(X_train, X_test, y_train, y_test):
     '''
@@ -163,17 +205,11 @@ def train_models(X_train, X_test, y_train, y_test):
     output:
               None
     '''
-    srfc = RandomForestClassifier(random_state=42)
+    rfc = RandomForestClassifier(random_state=42)
     lrc = LogisticRegression()
 
-    param_grid = { 
-        'n_estimators': [200, 500],
-        'max_features': ['auto', 'sqrt'],
-        'max_depth' : [4,5,100],
-        'criterion' :['gini', 'entropy']
-    }
 
-    cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
+    cv_rfc = GridSearchCV(estimator=rfc, param_grid= config.PARAM_GRID, cv=5)
     cv_rfc.fit(X_train, y_train)
 
     lrc.fit(X_train, y_train)

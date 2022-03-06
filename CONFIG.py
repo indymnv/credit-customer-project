@@ -11,3 +11,10 @@ KEEP_COLS = ['Customer_Age', 'Dependent_count', 'Months_on_book',
              'Gender_Churn', 'Education_Level_Churn', 'Marital_Status_Churn', 
              'Income_Category_Churn', 'Card_Category_Churn']
 
+PARAM_GRID = { 
+        'n_estimators': [200, 500],
+        'max_features': ['auto', 'sqrt'],
+        'max_depth' : [4,5,100],
+        'criterion' :['gini', 'entropy']
+    }
+
