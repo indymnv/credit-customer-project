@@ -3,6 +3,10 @@ DATA_PATH = r"./data/bank_data.csv"
 
 IMAGE_PATH = r"./images/"
 
+
+CATEGORY_LIST = ["Gender", "Education_Level", "Marital_Status", 
+                "Income_Category", "Card_Category"]
+
 KEEP_COLS = ['Customer_Age', 'Dependent_count', 'Months_on_book',
              'Total_Relationship_Count', 'Months_Inaactive_12_mon',
              'Contacts_Count_12_mon', 'Credit_Limit', 'Total_Revolving_Bal',
@@ -10,6 +14,7 @@ KEEP_COLS = ['Customer_Age', 'Dependent_count', 'Months_on_book',
              'Total_Trans_Ct', 'Total_Ct_Chng_Q4_Q1', 'Avg_Utilization_Ratio',
              'Gender_Churn', 'Education_Level_Churn', 'Marital_Status_Churn', 
              'Income_Category_Churn', 'Card_Category_Churn']
+
 
 PARAM_GRID = { 
         'n_estimators': [200, 500],

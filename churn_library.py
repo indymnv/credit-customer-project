@@ -1,5 +1,9 @@
 # library doc string
-
+"""
+This file provide a end to end machine learning workflow with a classification model for a customer churn prediction
+name: Indy Navarro
+date: 
+"""
 
 # import libraries
 #import shap
@@ -168,10 +172,10 @@ def feature_importance_plot(model, X_data, output_pth):
     output:
              None
     '''
-    rfc_model = joblib.load('./models/rfc_model.pkl') #Then replace for model
+    #rfc_model = joblib.load('./models/rfc_model.pkl') #Then replace for model
 
     # Calculate feature importances
-    importances = rfc_model.best_estimator_.feature_importances_
+    importances = model.best_estimator_.feature_importances_
     # Sort feature importances in descending order
     indices = np.argsort(importances)[::-1]
 
@@ -203,7 +207,11 @@ def train_models(X_train, X_test, y_train, y_test):
               y_train: y training data
               y_test: y testing data
     output:
-              None
+              y_train_preds_lr: training predictions from logistic regression
+              y_train_preds_rf: training predictions from random forest
+              y_test_preds_lr: test predictions from logistic regression
+              y_test_preds_rf: test predictions from random forest
+              
     '''
     rfc = RandomForestClassifier(random_state=42)
     lrc = LogisticRegression()
@@ -233,3 +241,35 @@ def train_models(X_train, X_test, y_train, y_test):
     rfc_disp = plot_roc_curve(cv_rfc.best_estimator_, X_test, y_test, ax=ax, alpha=0.8)
     lrc_plot.plot(ax=ax, alpha=0.8)
     plt.savefig(r"./images/ROC_lr_and_rf_test.png")
+
+    return y_train_preds_rf, y_test_preds_rf, y_train_preds_lr, y_test_preds_lr
+
+if __name__ == "__main__":
+
+    df = import_data(config.DATA_PATH)
+
+    perform_eda(df)
+
+    df = encoder_helper(df, category_lst = config.CATEGORY_LIST)
+
+    X_train, X_test, y_train, y_test  = perform_feature_engineering(df)
+
+    y_train_preds_rf, y_test_preds_rf, y_train_preds_lr, y_test_preds_lr = train_models(X_train, X_test, y_train, y_test)
+
+    classification_report_image(y_train,
+                                y_test,
+                                y_train_preds_lr,
+                                y_train_preds_rf,
+                                y_test_preds_lr,
+                                y_test_preds_rf)
+
+    rfc_model = joblib.load('./models/rfc_model.pkl')
+
+    feature_importance_plot(rfc_model, X_train, output_pth = config.IMAGE_PATH)
+
+
+
+
+
+
+
