@@ -56,7 +56,7 @@ def test_eda():
         assert os.path.isfile("./images/Customer_age_hist.png")
         assert os.path.isfile("./images/marital_status_bar.png")
         assert os.path.isfile("./images/Total_trans_distplot.png")
-        assert os.path.isfile("./images/df_corr_heatmap.png")
+        assert os.path.isfile("./images/data_corr_heatmap.png")
         logging.info("Testing eda files: SUCCESS")
 
     except FileNotFoundError as err:
