@@ -2,7 +2,7 @@
 """
 This file provide a end to end machine learning workflow with a classification model for a customer churn prediction
 name: Indy Navarro
-date: 
+date: None
 """
 
 # import libraries
@@ -114,7 +114,7 @@ def perform_feature_engineering(df, response):
               y_test: y testing data
     '''
 
-    y = df["churn"]
+    y = df["Churn"]
     X = pd.DataFrame()
     X[config.KEEP_COLS] = df[config.KEEP_COLS]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.3, random_state=42)
