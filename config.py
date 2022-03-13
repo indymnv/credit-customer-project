@@ -22,4 +22,3 @@ PARAM_GRID = {
         'max_depth' : [4,5,100],
         'criterion' :['gini', 'entropy']
     }
-
